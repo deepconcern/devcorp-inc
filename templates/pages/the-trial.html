@@ -76,9 +76,11 @@
             + "------------------------------------------------------");
 
             (() => {
-                const FAIL_AUDIO = new Audio("/static/puzzle-fail.wav");
-                const STEP_AUDIO = new Audio("/static/puzzle-step.wav");
-                const WIN_AUDIO = new Audio("/static/puzzle-win.mp3");
+                const SOUNDS = {
+                    fail: new Audio("/static/puzzle-fail.wav"),
+                    step: new Audio("/static/puzzle-step.wav"),
+                    win: new Audio("/static/puzzle-win.mp3"),
+                };
 
                 const MAP = [
                     ["triangle", "circle", "square", "triangle", "triangle", "square", "square", "circle"],
@@ -88,9 +90,14 @@
                     ["diamond", "square", "triangle", "square", "circle", "circle", "triangle", "diamond"],
                 ];
 
-                const STEP_TIMEOUT = 1200;
+                const STEP_TIMEOUT = 500;
 
                 // Logic
+
+                for (const sound of Object.values(SOUNDS)) {
+                    sound.preload = "auto";
+                    sound.load();
+                }
 
                 const waitScreenEl = document.getElementById("wait-screen");
 
@@ -117,9 +124,22 @@
                 const availableDirections = new Set(["up", "down", "left", "right"]);
 
                 function activateTile(tile) {
+                    // Sound effect
+                    playSound("step");
+
                     tile.active = true;
                     setClickability(tile, false);
                     tile.element.style.color = "blue";
+                }
+
+                function playSound(name) {
+                    if (!(name in SOUNDS)) {
+                        return;
+                    }
+
+                    const sound = SOUNDS[name].cloneNode();
+
+                    sound.play();
                 }
 
                 function setClickability(tile, clickable) {
@@ -160,8 +180,8 @@
                 }
 
                 function resetBoard() {
-                    FAIL_AUDIO.play();
-                    
+                    playSound("fail");
+
                     for (const row of mapStatus) {
                         for (const tile of row) {
                             tile.active = false;
@@ -247,9 +267,6 @@
                             // Tile is not valid
                             if (!tile.clickable) return;
 
-                            // Sound effect
-                            STEP_AUDIO.play();
-
                             // Is first click?
                             if (!previousSelection) {
                                 activateTile(tile);
@@ -265,9 +282,6 @@
 
                                 return;
                             }
-                            
-                            // Mark it active
-                            activateTile(tile);
 
                             // Check direction
                             let direction;
@@ -293,7 +307,6 @@
                                 let cursor = tile;
 
                                 function moveCursor() {
-                                    STEP_AUDIO.play();
                                     if (!logic[cursor.type]) {
                                         selectTile(cursor);
                                         
@@ -319,7 +332,7 @@
 
                                     // If true, we won
                                     if (cursor) {
-                                        WIN_AUDIO.play();
+                                        playSound("win");
                                         setGameState("finished");
 
                                         for (const row of mapStatus) {
