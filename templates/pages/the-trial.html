@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>The Trial</title>
+    </head>
+    <body>
+        <style>
+            h1 {
+                font-size: 10rem;
+                margin: 0 1rem;
+                text-align: center;
+                width: 100%;
+            }
+
+            .board {
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+            }
+
+            .game-area {
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+                height: 100%;
+                justify-content: space-between;
+                width: 100%;
+            }
+
+            .row {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .tile {
+                font-size: 100px;
+                text-align: center;
+                user-select: none;
+            }
+
+            .title {
+                flex: 0;
+            }
+        </style>
+        <div class="board">
+            <h1 id="title">The Trial</h1>
+            <div id="game-area"></div>
+        </div>
+        <script>
+            console.log("----------------------------------------------------\n"
+            + "Oh wow, hey, look at you, you little smartie.\n"
+            + "You found the source code for this puzzle.\n"
+            + "Now... You could go through it and figure it out,\n"
+            + "or you could just enjoy the feeling of beating it using your\n"
+            + "big brain!\n"
+            + "------------------------------------------------------");
+
+            (() => {
+                const MAP = [
+                    ["triangle", "circle", "square", "triangle", "triangle", "square", "square", "circle"],
+                    ["triangle", "diamond", "circle", "circle", "diamond", "triangle", "circle", "triangle"],
+                    ["diamond", "circle", "diamond", "triangle", "square", "square", "circle", "square"],
+                    ["circle", "square", "square", "square", "triangle", "diamond", "diamond", "circle"],
+                    ["diamond", "square", "triangle", "square", "circle", "circle", "triangle", "diamond"],
+                ];
+
+                // Logic
+
+                let gameState = "ready";
+
+                let previousSelection = null;
+
+                const mapStatus = MAP.map((row, rowIndex) => row.map((tileType, tileIndex) => ({
+                    active: false,
+                    clickable: rowIndex === MAP.length - 1,
+                    element: null,
+                    rowIndex,
+                    tileIndex,
+                    type: tileType,
+                })));
+
+                const logic = {
+                    "circle": null,
+                    "diamond": null,
+                    "square": null,
+                    "triangle": null,
+                };
+
+                const availableDirections = new Set(["up", "down", "left", "right"]);
+
+                function activateTile(tile) {
+                    tile.active = true;
+                    tile.clickable = false;
+                    tile.element.style.color = "blue";
+                }
+
+                function getAvailableNeighbors(tile) {
+                    // Check possible neighbors
+                    const availableNeighbors = [];
+
+                    for (const availableDirection of availableDirections) {
+                        const neighbor = getNeighbor(tile, availableDirection);
+
+                        if (neighbor && !neighbor.active) {
+                            availableNeighbors.push(neighbor);
+                            neighbor.clickable = true;
+                        }
+                    }
+
+                    return availableNeighbors;
+                }
+
+                function getNeighbor(tile, direction) {
+                    if (direction === "left" && tile.tileIndex > 0) return mapStatus[tile.rowIndex][tile.tileIndex - 1];
+                    if (direction === "right" && tile.tileIndex < mapStatus[0].length - 1) return mapStatus[tile.rowIndex][tile.tileIndex + 1];
+                    if (direction === "up" && tile.rowIndex > 0) return mapStatus[tile.rowIndex - 1][tile.tileIndex];
+                    if (direction === "down" && tile.rowIndex < mapStatus.length - 1) return mapStatus[tile.rowIndex + 1][tile.tileIndex];
+
+                    // Check out of bounds
+                    if (direction === "up") return true;
+                    else return false;
+                }
+
+                function resetBoard() {
+                    for (const row of mapStatus) {
+                        for (const tile of row) {
+                            tile.active = false;
+
+                            tile.element.style.color = null;
+
+                            if (tile.rowIndex === mapStatus.length - 1) tile.clickable = true;
+                            else tile.clickable = false;
+                        }
+                    }
+
+                    for (const tileType of ["circle", "diamond", "square", "triangle"]) {
+                        logic[tileType] = null;
+                    }
+
+                    for (const direction of ["up", "left", "down", "right"]) {
+                        availableDirections.add(direction);
+                        
+                    }
+
+                    previousSelection = null;
+                }
+
+                function selectTile(tile) {
+                    activateTile(tile);
+                    wipeBoardClickability();
+
+                    previousSelection = tile;
+
+                    // Get available neighbors
+                    const availableNeighbors = getAvailableNeighbors(tile);
+
+                    // Check for failure
+                    if (availableNeighbors.length === 0) resetBoard();
+                }
+
+                function wipeBoardClickability() {
+                    for (const row of mapStatus) {
+                        for (const tile of row) {
+                            tile.clickable = false;
+                        }
+                    }
+                }
+
+                // Build board
+                const gameAreaEl = document.getElementById("game-area");
+
+                gameAreaEl.classList.add("game-area");
+
+                for (const row of mapStatus) {
+                    const rowEl = document.createElement("div");
+
+                    rowEl.classList.add("row");
+
+                    for (const tile of row) {
+                        const tileEl = document.createElement("div");
+
+                        tileEl.classList.add("tile");
+                        tileEl.style = {};
+
+                        let tileContent;
+                        
+                        if (tile.type === "circle") tileContent = "●";
+                        else if (tile.type === "diamond") tileContent = "◆";
+                        else if (tile.type === "triangle") tileContent = "▲";
+                        else tileContent = "◼";
+
+                        tileEl.addEventListener("mouseenter", () => {
+                            if (gameState !== "ready") return;
+                            
+                            if (tile.clickable) tileEl.style.cursor = "pointer";
+                            else tileEl.style.cursor = "no-drop";
+                        });
+
+                        tileEl.addEventListener("click", () => {
+                            if (gameState !== "ready") return;
+                            
+                            // Tile has already been activated, ignore click
+                            if (tile.active) return;
+
+                            // Tile is not valid
+                            if (!tile.clickable) return;
+
+                            // Is first click?
+                            if (!previousSelection) {
+                                activateTile(tile);
+                                previousSelection = tile;
+
+                                // Reset clickability (mainly for bottom row)
+                                wipeBoardClickability();
+
+                                // Set adjacent to clickable
+                                mapStatus[tile.rowIndex - 1][tile.tileIndex].clickable = true; // Above
+                                if (tile.tileIndex > 0) mapStatus[tile.rowIndex][tile.tileIndex - 1].clickable = true; // Left
+                                if (tile.tileIndex < row.length - 1) mapStatus[tile.rowIndex][tile.tileIndex + 1].clickable = true; // Right
+
+                                return;
+                            }
+                            
+                            // Mark it active
+                            activateTile(tile);
+
+                            // Check direction
+                            let direction;
+
+                            if (tile.rowIndex > previousSelection.rowIndex) direction = "down";
+                            else if (tile.rowIndex < previousSelection.rowIndex) direction = "up";
+                            else if (tile.tileIndex > previousSelection.tileIndex) direction = "right";
+                            else direction = "left";
+
+                            // Program previous tile
+                            logic[previousSelection.type] = direction;
+                            availableDirections.delete(direction);
+
+                            // Is it about to be programmed? This should only happen once in the puzzle
+                            if (tile.type === previousSelection.type) {
+                                logic[previousSelection.type] = direction;
+                            }
+
+                            // Is programed? (Or just progammed)
+                            if (logic[tile.type]) {
+                                let cursor = tile;
+
+                                // Perform the logic
+                                while (logic[cursor.type]) { // Luke here
+                                    activateTile(cursor);
+                                    cursor = getNeighbor(cursor, logic[cursor.type]);
+
+                                    // If an object, we aren't out of bounds but we didn't win either
+                                    if (typeof cursor === "object") {
+                                        if (cursor.active) {
+                                            resetBoard();
+                                            return;
+                                        }
+                                    } else {
+                                        resetBoard();
+
+                                        // If true, we won
+                                        if (cursor) {
+
+                                            for (const row of mapStatus) {
+                                                for (const tile of row) {
+                                                    tile.clickable = false;
+                                                    tile.element.style.color = "red";
+                                                }
+                                            }
+                                        } else {
+                                            resetBoard();
+                                        }
+
+                                        return;
+                                    }
+                                }
+
+                                selectTile(cursor);
+                            } else { // Game has started
+                                selectTile(tile);
+                            }
+                        });
+
+                        tileEl.addEventListener("mouseleave", () => {
+                            if (gameState !== "ready") return;
+
+                            tileEl.style.cursor = null;
+                        });
+
+                        tileEl.textContent = tileContent;
+                        
+                        tile.element = tileEl;
+
+                        rowEl.appendChild(tileEl);
+                    }
+
+                    gameAreaEl.appendChild(rowEl);
+                }
+
+                const scriptEls = document.getElementsByTagName("script");
+
+                for (const scriptEl of scriptEls) {
+                    scriptEl.remove();
+                }
+            })();
+        </script>
+    </body>
+</html>

@@ -1,0 +1,177 @@
+{% extends "pages/base.html" %}
+
+{% block title %}Home{% endblock title %}
+{% block main %}
+
+{# Hero START #}
+<style>
+    .twelve-hero {
+        background-size: cover;
+        background-position-y: center;
+        background-image: url("/static/images/hero.jpg");
+        height: 30vw;
+    }
+
+    .twelve-tagline {
+        margin-bottom: 5rem !important;
+        margin-top: 5rem !important;
+    }
+</style>
+<div class="twelve-hero w-100"></div>
+<div class="container-fluid my-5">
+    <p class="fs-1 fw-bold mb-5 text-center w-100">Synergizing at the speed of <span
+            class="text-decoration-underline">NOW</span></span></p>
+    <p class="mb-5 text-center w-100">
+        Our products help you connect people to customers
+        <br>
+        no matter where they are.
+    </p>
+</div>
+{# Hero END #}
+
+<hr>
+
+{# Values START #}
+<style>
+    .twelve-card-image {
+        height: 25vw;
+        object-fit: cover;
+    }
+</style>
+<div class="container my-5">
+    <h4 class="fs-1 mb-5 text-center">What makes us great</h4>
+    <div class="mb-5 row">
+        <div class="col">
+            <div class="card h-100">
+                <img class="card-img-top twelve-card-image" src="/static/images/innovation.jpg">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Innovative Ideation 💡</h5>
+                    <p class="card-text">We're plancks ahead of our competitors.</p>
+                    <p class="card-text">This industry requires intense innovation at every turn, and we're hear to
+                        provide.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <img class="card-img-top twelve-card-image" src="/static/images/math.png">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Factorial Growth 📈</h5>
+                    <p class="card-text">We don't settle for exponential growth, we go for factorial.</p>
+                    <p class="card-text">It doesn't take a rocket scientist to know which is better, it takes a world
+                        class leadership team.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card h-100">
+                <img class="card-img-top twelve-card-image" src="/static/images/sutainability.jpg">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Sustainability 🌲</h5>
+                    <p class="card-text">We've learned that running our datacenters at their current capacity is killing
+                        the planet. And we don't like that!</p>
+                    <p class="card-text">We're not scaling down, but we are taking a percentage of our employee's
+                        salaries to plant trees to make up for it.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-center w-100">
+        <a class="btn btn-lg btn-primary" href="/about">Learn more</a>
+    </div>
+</div>
+{# Values END #}
+
+<hr class="my-5">
+
+{# Reviews START #}
+<style>
+    .blockquote::before {
+        content: "\201C";
+        /* Left Double Quotation Mark */
+    }
+
+    .blockquote::after {
+        content: "\201D";
+        /* Right Double Quotation Mark */
+    }
+
+    .twelve-quote-img {
+        filter: grayscale();
+        opacity: 50%;
+    }
+</style>
+<div class="container">
+    <h4 class="fs-3 fw-bold mb-5 text-center">Hear what other industry leader's say about us!</h4>
+
+    <div class="border-2 border-bottom border-primary mb-5 w-100"></div>
+
+    <div class="mb-5 position-relative">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-4">
+                <img class="img-fluid twelve-quote-img" src="/static/images/jeff.png">
+            </div>
+        </div>
+        <figure class="position-absolute top-0 start-0">
+            <blockquote class="blockquote fs-4 fw-semibold">Twelve Software is vital for businesses. Their services are the backbone of AWS, and their software runs on the Blue Origin ships. They know the 1% need to stay at the top, otherwise the world would fall to chaos.</blockquote>
+            <figcaption class="blockquote-footer">Jeff Bezos (CEO of Amazon)</figcaption>
+        </figure>
+    </div>
+
+    <div class="border-2 border-bottom border-primary mb-5 w-100"></div>
+
+    <div class="mb-5 position-relative">
+        <div class="row">
+            <div class="col-4">
+                <img class="img-fluid twelve-quote-img" src="/static/images/elon.png">
+            </div>
+            <div class="col"></div>
+        </div>
+        <figure class="position-absolute top-0 start-0">
+            <blockquote class="blockquote fs-4 fw-semibold">I will buy you next.</blockquote>
+            <figcaption class="blockquote-footer">Elon Musk (CEO of Twitter. Or is it X? I don't know anymore)</figcaption>
+        </figure>
+    </div>
+
+    <div class="border-2 border-bottom border-primary mb-5 w-100"></div>
+
+    <div class="mb-5 position-relative">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-4">
+                <img class="img-fluid twelve-quote-img" src="/static/images/hasselhoff.png">
+            </div>
+        </div>
+        <figure class="position-absolute top-0 start-0">
+            <blockquote class="blockquote fs-4 fw-semibold">I've used many different services in the past, but none compare to the quality of Twelve Software. I can get real-time reporting on Wi-Fi analytics and manage network access from a single dashboard. Plus, the encrypted connects mean my users can access our network without worry.</blockquote>
+            <figcaption class="blockquote-footer">David Hasselhoff (actor, singer, datacenter admin)</figcaption>
+        </figure>
+    </div>
+
+</div>
+{# Reviews END #}
+
+<hr class="my-5">
+
+{# Recruitment START #}
+<style>
+    .twelve-recruit-img {
+        background-size: cover;
+        background-position-y: center;
+        background-image: url("/static/images/recruit.jpg");
+        height: 30vw;
+    }
+</style>
+<div class="container">
+    <h4 class="fs-3 fw-bold mb-5 text-center">It starts with you!</h4>
+
+    <div class="mb-5 twelve-recruit-img"></div>
+
+    <div class="text-center w-100">
+        <a class="btn btn-lg btn-primary" href="/careers">Join Us</a>
+    </div>
+</div>
+{# Recruitment END #}
+
+{% endblock %}
