@@ -36,9 +36,25 @@
             }
 
             .tile {
+                cursor: no-drop;
                 font-size: 100px;
                 text-align: center;
                 user-select: none;
+            }
+
+            .tile.clickable {
+                cursor: pointer;
+            }
+
+            #wait-screen {
+                background-color: transparent;
+                cursor: wait;
+                height: 100vh;
+                left: 0;
+                position: fixed;
+                top: 0;
+                width: 100vw;
+                z-index: 100000;
             }
 
             .title {
@@ -48,6 +64,7 @@
         <div class="board">
             <h1 id="title">The Trial</h1>
             <div id="game-area"></div>
+            <div id="wait-screen" style="display: none;"></div>
         </div>
         <script>
             console.log("----------------------------------------------------\n"
@@ -59,6 +76,10 @@
             + "------------------------------------------------------");
 
             (() => {
+                const FAIL_AUDIO = new Audio("/static/puzzle-fail.wav");
+                const STEP_AUDIO = new Audio("/static/puzzle-step.wav");
+                const WIN_AUDIO = new Audio("/static/puzzle-win.mp3");
+
                 const MAP = [
                     ["triangle", "circle", "square", "triangle", "triangle", "square", "square", "circle"],
                     ["triangle", "diamond", "circle", "circle", "diamond", "triangle", "circle", "triangle"],
@@ -67,7 +88,11 @@
                     ["diamond", "square", "triangle", "square", "circle", "circle", "triangle", "diamond"],
                 ];
 
+                const STEP_TIMEOUT = 1200;
+
                 // Logic
+
+                const waitScreenEl = document.getElementById("wait-screen");
 
                 let gameState = "ready";
 
@@ -93,8 +118,18 @@
 
                 function activateTile(tile) {
                     tile.active = true;
-                    tile.clickable = false;
+                    setClickability(tile, false);
                     tile.element.style.color = "blue";
+                }
+
+                function setClickability(tile, clickable) {
+                    tile.clickable = clickable;
+
+                    if (clickable) {
+                        tile.element.classList.add("clickable");
+                    } else {
+                        tile.element.classList.remove("clickable");
+                    }
                 }
 
                 function getAvailableNeighbors(tile) {
@@ -106,7 +141,7 @@
 
                         if (neighbor && !neighbor.active) {
                             availableNeighbors.push(neighbor);
-                            neighbor.clickable = true;
+                            setClickability(neighbor, true);
                         }
                     }
 
@@ -125,14 +160,16 @@
                 }
 
                 function resetBoard() {
+                    FAIL_AUDIO.play();
+                    
                     for (const row of mapStatus) {
                         for (const tile of row) {
                             tile.active = false;
 
                             tile.element.style.color = null;
 
-                            if (tile.rowIndex === mapStatus.length - 1) tile.clickable = true;
-                            else tile.clickable = false;
+                            if (tile.rowIndex === mapStatus.length - 1) setClickability(tile, true);
+                            else setClickability(tile, false);
                         }
                     }
 
@@ -145,6 +182,7 @@
                         
                     }
 
+                    setGameState("ready");
                     previousSelection = null;
                 }
 
@@ -161,10 +199,17 @@
                     if (availableNeighbors.length === 0) resetBoard();
                 }
 
+                function setGameState(state) {
+                    gameState = state;
+
+                    if (state === "wait") waitScreenEl.style.display = "block";
+                    else waitScreenEl.style.display = "none";
+                }
+
                 function wipeBoardClickability() {
                     for (const row of mapStatus) {
                         for (const tile of row) {
-                            tile.clickable = false;
+                            setClickability(tile, false);
                         }
                     }
                 }
@@ -183,6 +228,7 @@
                         const tileEl = document.createElement("div");
 
                         tileEl.classList.add("tile");
+                        if (tile.clickable) tileEl.classList.add("clickable");
                         tileEl.style = {};
 
                         let tileContent;
@@ -191,13 +237,6 @@
                         else if (tile.type === "diamond") tileContent = "◆";
                         else if (tile.type === "triangle") tileContent = "▲";
                         else tileContent = "◼";
-
-                        tileEl.addEventListener("mouseenter", () => {
-                            if (gameState !== "ready") return;
-                            
-                            if (tile.clickable) tileEl.style.cursor = "pointer";
-                            else tileEl.style.cursor = "no-drop";
-                        });
 
                         tileEl.addEventListener("click", () => {
                             if (gameState !== "ready") return;
@@ -208,6 +247,9 @@
                             // Tile is not valid
                             if (!tile.clickable) return;
 
+                            // Sound effect
+                            STEP_AUDIO.play();
+
                             // Is first click?
                             if (!previousSelection) {
                                 activateTile(tile);
@@ -217,9 +259,9 @@
                                 wipeBoardClickability();
 
                                 // Set adjacent to clickable
-                                mapStatus[tile.rowIndex - 1][tile.tileIndex].clickable = true; // Above
-                                if (tile.tileIndex > 0) mapStatus[tile.rowIndex][tile.tileIndex - 1].clickable = true; // Left
-                                if (tile.tileIndex < row.length - 1) mapStatus[tile.rowIndex][tile.tileIndex + 1].clickable = true; // Right
+                                setClickability(mapStatus[tile.rowIndex - 1][tile.tileIndex], true); // Above
+                                if (tile.tileIndex > 0) setClickability(mapStatus[tile.rowIndex][tile.tileIndex - 1], true); // Left
+                                if (tile.tileIndex < row.length - 1) setClickability(mapStatus[tile.rowIndex][tile.tileIndex + 1], true); // Right
 
                                 return;
                             }
@@ -246,49 +288,56 @@
 
                             // Is programed? (Or just progammed)
                             if (logic[tile.type]) {
+                                setGameState("wait");
+
                                 let cursor = tile;
 
-                                // Perform the logic
-                                while (logic[cursor.type]) { // Luke here
+                                function moveCursor() {
+                                    STEP_AUDIO.play();
+                                    if (!logic[cursor.type]) {
+                                        selectTile(cursor);
+                                        
+                                        setGameState("ready");
+
+                                        return;
+                                    };
+
                                     activateTile(cursor);
                                     cursor = getNeighbor(cursor, logic[cursor.type]);
 
                                     // If an object, we aren't out of bounds but we didn't win either
                                     if (typeof cursor === "object") {
-                                        if (cursor.active) {
-                                            resetBoard();
-                                            return;
-                                        }
-                                    } else {
-                                        resetBoard();
-
-                                        // If true, we won
-                                        if (cursor) {
-
-                                            for (const row of mapStatus) {
-                                                for (const tile of row) {
-                                                    tile.clickable = false;
-                                                    tile.element.style.color = "red";
-                                                }
-                                            }
-                                        } else {
-                                            resetBoard();
-                                        }
+                                        // We ran into an already active tile, fail state
+                                        if (cursor.active) resetBoard();
+                                        // Keep going
+                                        else setTimeout(moveCursor, STEP_TIMEOUT);
 
                                         return;
                                     }
+
+                                    // We are out of bounds, either we failed or we reached the goal
+
+                                    // If true, we won
+                                    if (cursor) {
+                                        WIN_AUDIO.play();
+                                        setGameState("finished");
+
+                                        for (const row of mapStatus) {
+                                            for (const tile of row) {
+                                                setClickability(tile, false);
+                                                
+                                                if (tile.active) tile.element.style.color = "gold";
+                                            }
+                                        }
+                                    } else {
+                                        resetBoard();
+                                    }
                                 }
 
-                                selectTile(cursor);
+                                setTimeout(moveCursor, 0);
                             } else { // Game has started
                                 selectTile(tile);
                             }
-                        });
-
-                        tileEl.addEventListener("mouseleave", () => {
-                            if (gameState !== "ready") return;
-
-                            tileEl.style.cursor = null;
                         });
 
                         tileEl.textContent = tileContent;
