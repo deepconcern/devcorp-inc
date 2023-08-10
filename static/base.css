@@ -1,5 +1,7 @@
 :root {
     --bs-body-font-family: 'Optimistic Display Medium', Helvetica, Arial, sans-serif;
+    --bs-body-color: #42526e;
+    --bs-heading-color: #253858;
     --bs-primary: #3D67B5;
     --bs-primary-rgb: 61, 103, 181;
 }

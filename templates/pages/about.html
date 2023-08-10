@@ -1,0 +1,69 @@
+{% extends "pages/base.html" %}
+{% block title %}About{% endblock title %}
+{% block active_tab %}about{% endblock active_tab %}
+{% block main %}
+
+{# About Intro START #}
+<div class="container my-5">
+    <div class="my-5 row">
+        <div class="align-items-center col d-flex">
+            <h4 class="text-center">Wirelessly sending our passion to your hearts</h3>
+        </div>
+        <div class="col">
+            <img class="img-fluid" src="/static/images/about.jpg">
+        </div>
+    </div>
+</div>
+{# About Intro END #}
+
+<hr class="mb-5">
+
+{# Mission Statement START #}
+<div class="container mb-5">
+    <h4 class="mb-4 text-center">Mission Statement</h4>
+    <img class="d-block img-fluid mx-auto" src="/static/images/wolverine.png">
+    <p>The wolverine is our mascot. We are proud fighters who aggressively create solutions to tear apart the customers problems.</p>
+    <p>Like the wolverine, we often tackle obstacles many times our size. While we may have a burned out engineer here or there, we accomplish our goals.</p>
+</div>
+{# Mission Statement END #}
+
+<hr class="mb-5">
+
+{# Values START #}
+<div class="container">
+    <h4 class="mb-5 text-center">The four pillars of our values</h4>
+    <div class="row mb-5">
+        <div class="col">
+            <div class="card text-bg-primary">
+                <div class="card-body">
+                    <p class="card-text">Ferocity</p>
+                </div> 
+            </div>
+        </div>
+        <div class="col">
+            <div class="card text-bg-primary">
+                <div class="card-body">
+                    <p class="card-text">Fearlessness</p>
+                </div> 
+            </div>
+        </div>
+        <div class="col">
+            <div class="card text-bg-primary">
+                <div class="card-body">
+                    <p class="card-text">Fierceness</p>
+                </div> 
+            </div>
+        </div>
+        <div class="col">
+            <div class="card text-bg-primary">
+                <div class="card-body">
+                    <p class="card-text">Ferociousness</p>
+                </div> 
+            </div>
+        </div>
+    </div>
+    <p class="text-center">Inspired by our mascot, we strive to maintain the above values in our work.</p>
+</div>
+{# Values END #}
+
+{% endblock %}

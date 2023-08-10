@@ -1,0 +1,53 @@
+{% extends "pages/base.html" %}
+{% block title %}Events{% endblock title %}
+{% block active_tab %}events{% endblock active_tab %}
+{% block main %}
+
+{# Events Intro START #}
+<div class="container my-5">
+        <h3 class="mb-4 text-center">We don't just work hard, we play hard as well!</h3>
+        <p class="fs-5 text-center">Research indicates that humans are the only animals that require breaks from work.</p>
+        <p class="fs-5 text-center">Until our genetically modified giraffe engineer program takes off, we offer many fun activities for our workers.</p>
+    <img class="img-fluid" src="/static/images/events.jpg">
+</div>
+{# Events Intro END #}
+
+<hr class="mb-5">
+
+{# Gallery START #}
+<div class="container">
+    <h4 class="mb-5 text-center">Come check our previous events!</h4>
+    <div id="gallery" class="carousel slide">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img class="d-block w-100" src="/static/images/expo-event.jpg">
+                <div class="carousel-caption d-none d-md-block">
+                    <p>Expos! This is when we learned about Linux.</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img class="d-block w-100" src="/static/images/bowling-event.jpg">
+                <div class="carousel-caption d-none d-md-block">
+                    <p>Top notch bowling tournaments. Ball's in your court, competitors (excuse the bowling pun).</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img class="d-block w-100" src="/static/images/bridge-event.jpg">
+                <div class="carousel-caption d-none d-md-block">
+                    <p>Our bridge club is one of the highest ranked among all corporate bridge clubs.</p>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#gallery" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#gallery" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+{# Gallery END #}
+
+{% endblock %}

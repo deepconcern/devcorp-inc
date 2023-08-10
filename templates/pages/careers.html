@@ -2,7 +2,11 @@
 {% block title %}Careers{% endblock title %}
 {% block active_tab %}careers{% endblock active_tab %}
 {% block main %}
-<div class="container-fluid">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{# Careers Intro START #}
+<div class="container my-5">
     <div class="row mt-3 w-100">
         <div class="col-8">
             <img src="/static/images/opportunity.avif" class="col img-fluid">
@@ -14,4 +18,72 @@
         </div>
     </div>
 </div>
+{# Careers Intro END #}
+
+<hr class="mb-5">
+
+{# Reasons to Join START #}
+<div class="container mb-5">
+    <h4 class="mb-5">Here are some reasons to join:</h4>
+    <div class="row">
+        <ul class="col">
+            <li class="mb-3">Monetary Compensation (You get money!)</li>
+            <li class="mb-3">Bonuses (Sometimes, you get more money!)</li>
+            <li class="mb-3">Holidays eleven times a year (includes national holidays) </li>
+        </ul>
+        <ul class="col">
+            <li class="mb-3">Lunch area (lunch not included)</li>
+            <li class="mb-3">Relaxation area (relaxation not included)</li>
+            <li class="mb-3">Bathrooms (bath included)</li>
+        </ul>
+    </div>
+</div>
+{# Reasons to Join END #}
+
+<hr class="mb-5">
+
+{# Feedback START #}
+<div class="container mx-auto w-50">
+    <div class="row">
+        <div class="align-items-center col d-flex flex-column justify-content-center">
+            <p>When interviewed about working here</p>
+            <p>100% of employees indicated that</p>
+            <p>they had an opinion</p>
+        </div>
+        <div class="col">
+            <canvas class="" id="chart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    (() => {
+        new Chart(document.getElementById("chart"), {
+            data: {
+                datasets: [{
+                    data: [1],
+                }],
+            },
+            options: {
+                plugins: {
+                    tooltip: {
+                        enabled: false,
+                    },
+                },
+            },
+            type: "pie",
+        });
+    })();
+</script>
+{# Feedback END #}
+
+<hr class="mb-5">
+
+{# Join Now START #}
+<div class="container">
+    <h4 class="text-center mb-3">Join Us Today!</h4>
+    <p class="text-center">Reach out to our recruiters who are waiting by their phones this moment. They're on commission, so you're practically in.</p>
+</div>
+{# Join Now END #}
+
 {% endblock %}
