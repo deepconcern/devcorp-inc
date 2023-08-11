@@ -18,7 +18,7 @@ def careers():
 def events():
     return render_template("pages/events.html")
 
-@app.route("/the-trial")
+@app.route("/thetrial")
 def the_trial():
     return render_template("pages/the-trial.html")
 
