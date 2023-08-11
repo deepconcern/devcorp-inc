@@ -22,6 +22,4 @@ def events():
 def the_trial():
     return render_template("pages/the-trial.html")
 
-# @app.route("/careers")
-# def careers():
-#     return render_template("pages/careers.html")
+application = app
